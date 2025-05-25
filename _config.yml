@@ -7,13 +7,13 @@
 # server process.
 
 # Basic Site Settings
-locale                   : "en-US"
+locale                   : "Shanghai,China"
 site_theme               : "default"
-title                    : "Your Name / Site Title"
+title                    : "Yejia Liu / Personal Homepage"
 title_separator          : "-"
-name                     : &name "Your Name"
+name                     : &name "Yejia Liu"
 description              : &description "personal description"
-url                      : https://academicpages.github.io # the base hostname & protocol for your site e.g. "https://[your GitHub username].github.io" or if you already have some other page hosted on Github then use "https://[your GitHub username].github.io/[Your Repo Name]"
+url                      : https://yejialiu.github.io/YejiaLiupages.github.io
 baseurl                  : "" # the subpath of your site, e.g. "/blog"
 repository               : "academicpages/academicpages.github.io"
 
@@ -23,13 +23,12 @@ repository               : "academicpages/academicpages.github.io"
 author:
   # Biographic information
   avatar           : "profile.png"
-  name             : "Your Sidebar Name"
-  pronouns         : # example: "she/her"  
-  bio              : "Short biography for the left-hand sidebar"
-  location         : "Earth"
-  employer         : "Red Brick University"
+  name             : "Yejia Liu"
+  bio              : "Incoming Mphil Student of CSE, HKUST"
+  location         : "Shanghai, China"
+  employer         : "Shanghai Jiao Tong University"
   uri              : # URL
-  email            : "none@example.org" 
+  email            : "wendyliuyejia@sjtu.edu.cn" 
 
   # Academic websites
   academia         : # URL
