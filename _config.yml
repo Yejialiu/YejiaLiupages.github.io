@@ -13,7 +13,7 @@ title                    : "Yejia Liu / Personal Homepage"
 title_separator          : "-"
 name                     : &name "Yejia Liu"
 description              : &description "Senior Student from Shanghai Jiao Tong University, Incoming Mphil Student of CSE, HKUST"
-url                      : https://yejialiu.github.io
+url                      : https://github.com/Yejialiu
 baseurl                  : #https://yejialiu.github.io/YejiaLiupages.github.io
 repository               : "Yejialiu/YejiaLiupages.github.io"
 
@@ -45,7 +45,7 @@ author:
   bitbucket        : # Username - Update with your username on the site
   codepen          : # Username
   dribbble         : # Username
-  github           : "https://yejialiu.github.io"
+  github           : "https://github.com/Yejialiu"
   kaggle           : # Username  
   stackoverflow    : # User number or user number and name (i.e., use "1" or "1/jeff-atwood")    
 
