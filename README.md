@@ -1,9 +1,19 @@
-# Academic Pages
+# Yejia Liu's Personal Homepage
+
+Source for my personal academic website (GitHub Pages / Jekyll).
+
+个人学术主页源码，用于展示个人简介、CV、研究/项目等信息。
+
+- Live site: https://yejialiu.github.io/
+
+---
+
+## Academic Pages (template)
 **Academic Pages is a GitHub Pages template for personal and professional portfolio-oriented websites.**
 
 ![Academic Pages template example](images/homepage.png "Academic Pages template example")
 
-# Getting Started
+### Getting Started
 
 1. Register a GitHub account if you don't have one and confirm your e-mail (required!)
 1. Click the "Use this template" button in the top right.
@@ -15,13 +25,13 @@
 
 See more info at https://academicpages.github.io/
 
-## Running locally
+#### Running locally
 
 When you are initially working on your website, it is very useful to be able to preview the changes locally before pushing them to GitHub. To work locally you will need to:
 
 1. Clone the repository and made updates as detailed above.
 
-### Using a different IDE
+##### Using a different IDE
 1. Make sure you have ruby-dev, bundler, and nodejs installed
     
     On most Linux distribution and [Windows Subsystem Linux](https://learn.microsoft.com/en-us/windows/wsl/about) the command is:
@@ -54,7 +64,7 @@ When you are initially working on your website, it is very useful to be able to 
 
 If you are running on Linux it may be necessary to install some additional dependencies prior to being able to run locally: `sudo apt install build-essential gcc make`
 
-## Using Docker
+#### Using Docker
 
 Working from a different OS, or just want to avoid installing dependencies? You can use the provided `Dockerfile` to build a container that will run the site for you if you have [Docker](https://www.docker.com/) installed.
 
@@ -67,17 +77,17 @@ docker compose up
 
 You should now be able to access the website from `localhost:4000`.
 
-### Using the DevContainer in VS Code
+##### Using the DevContainer in VS Code
 
 If you are using [Visual Studio Code](https://code.visualstudio.com/) you can use the [Dev Container](https://code.visualstudio.com/docs/devcontainers/containers) that comes with this Repository. Normally VS Code detects that a development coontainer configuration is available and asks you if you want to use the container. If this doesn't happen you can manually start the container by **F1->DevContainer: Reopen in Container**. This restarts your VS Code in the container and automatically hosts your academic page locally on http://localhost:4000. All changes will be updated live to that page after a few seconds.
 
-# Maintenance
+### Maintenance
 
 Bug reports and feature requests to the template should be [submitted via GitHub](https://github.com/academicpages/academicpages.github.io/issues/new/choose). For questions concerning how to style the template, please feel free to start a [new discussion on GitHub](https://github.com/academicpages/academicpages.github.io/discussions).
 
 This repository was forked (then detached) by [Stuart Geiger](https://github.com/staeiou) from the [Minimal Mistakes Jekyll Theme](https://mmistakes.github.io/minimal-mistakes/), which is © 2016 Michael Rose and released under the MIT License (see LICENSE.md). It is currently being maintained by [Robert Zupko](https://github.com/rjzupkoii) and additional maintainers would be welcomed.
 
-## Bugfixes and enhancements
+#### Bugfixes and enhancements
 
 If you have bugfixes and enhancements that you would like to submit as a pull request, you will need to [fork](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo) this repository as opposed to using it as a template. This will also allow you to [synchronize your copy](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/syncing-a-fork) of template to your fork as well.
 
