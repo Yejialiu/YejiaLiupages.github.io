@@ -12,7 +12,7 @@ site_theme               : "default"
 title                    : "Yejia Liu / Personal Homepage"
 title_separator          : "-"
 name                     : &name "Yejia Liu"
-description              : &description "Senior Student from Shanghai Jiao Tong University, Incoming Mphil Student of CSE, HKUST"
+description              : &description "Senior Student from Shanghai Jiao Tong University, Incoming PhD Student of CSE, HKUST"
 url                      : https://yejialiu.github.io/
 baseurl                  : #https://yejialiu.github.io/YejiaLiupages.github.io
 repository               : "Yejialiu/YejiaLiupages.github.io"
@@ -24,7 +24,7 @@ author:
   # Biographic information
   avatar           : "profile.png"
   name             : "Yejia Liu(刘叶嘉)"
-  bio              : "Senior Student from Shanghai Jiao Tong University, Incoming Mphil Student of CSE, HKUST"
+  bio              : "Senior Student from Shanghai Jiao Tong University, Incoming PhD Student of CSE, HKUST"
   location         : "Shanghai, China"
   employer         : "Shanghai Jiao Tong University"
   uri              : # URL
