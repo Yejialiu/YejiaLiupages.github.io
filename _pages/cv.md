@@ -9,56 +9,58 @@ redirect_from:
 
 {% include base_path %}
 
+[Download CV as PDF]({{ base_path }}/assets/Yejia_Liu_CV.pdf)
+
+Research Interests
+======
+* Computer vision
+* Machine learning
+* Embedded AI systems
+
 Education
 ======
-* Ph.D in Version Control Theory, GitHub University, 2018 (expected)
-* M.S. in Jekyll, GitHub University, 2014
-* B.S. in GitHub, GitHub University, 2012
-
-Work experience
-======
-* Spring 2024: Academic Pages Collaborator
-  * GitHub University
-  * Duties includes: Updates and improvements to template
-  * Supervisor: The Users
-
-* Fall 2015: Research Assistant
-  * GitHub University
-  * Duties included: Merging pull requests
-  * Supervisor: Professor Hub
-
-* Summer 2015: Research Assistant
-  * GitHub University
-  * Duties included: Tagging issues
-  * Supervisor: Professor Git
-  
-Skills
-======
-* Skill 1
-* Skill 2
-  * Sub-skill 2.1
-  * Sub-skill 2.2
-  * Sub-skill 2.3
-* Skill 3
+* Ph.D. student in Computer Science and Engineering, The Hong Kong University of Science and Technology
+  * Advisor: [Prof. Xiaomin Ouyang](https://seng.hkust.edu.hk/about/people/faculty/xiaomin-ouyang)
+* Undergraduate studies, Global College (formerly UM-SJTU Joint Institute), Shanghai Jiao Tong University
+* High School Affiliated to Shanghai Jiao Tong University
 
 Publications
 ======
-  <ul>{% for post in site.publications reversed %}
-    {% include archive-single-cv.html %}
-  {% endfor %}</ul>
-  
-Talks
-======
-  <ul>{% for post in site.talks reversed %}
-    {% include archive-single-talk-cv.html  %}
-  {% endfor %}</ul>
-  
+<ul>
+{% for post in site.publications reversed %}
+  {% if post.listed == false %}
+    {% continue %}
+  {% endif %}
+  <li>
+    <a href="{{ base_path }}{{ post.url }}">{{ post.title }}</a><br />
+    {% if post.citation %}
+      {{ post.citation }}
+    {% elsif post.status %}
+      {{ post.status }}
+    {% endif %}
+  </li>
+{% endfor %}
+</ul>
+
 Teaching
 ======
-  <ul>{% for post in site.teaching reversed %}
-    {% include archive-single-cv.html %}
-  {% endfor %}</ul>
-  
-Service and leadership
+<ul>
+{% for post in site.teaching reversed %}
+  <li>
+    <strong>{{ post.title }}</strong>
+    {% if post.venue %}, {{ post.venue }}{% endif %}
+    {% if post.term %}, {{ post.term }}{% endif %}
+  </li>
+{% endfor %}
+</ul>
+
+Academic & Research-related Awards
 ======
-* Currently signed in to 43 different slack teams
+* UM-SJTU Joint Institute Yu Leming Scholarships, 2023-2024 and 2024-2025
+* B Merit Scholarship, 2023-2024 and 2024-2025
+* Undergraduate Scholarship for Academic Progress, 2023-2024
+
+Contact
+======
+* Email: [wendyliuyejia@sjtu.edu.cn](mailto:wendyliuyejia@sjtu.edu.cn)
+* GitHub: [Yejialiu](https://github.com/Yejialiu)
