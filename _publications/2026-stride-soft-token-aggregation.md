@@ -8,6 +8,7 @@ excerpt: "Ongoing work in preparation for submission to ACM MobiCom 2026."
 status: "Ongoing work, in preparation for submission to ACM MobiCom 2026."
 year: 2026
 venue: "ACM MobiCom 2026"
+venue_url: "https://www.sigmobile.org/mobicom/2026/"
 ---
 
 Authors:
@@ -15,4 +16,4 @@ Authors:
 - Yejia Liu
 - Xiaomin Ouyang
 
-This is ongoing work in preparation for submission to ACM MobiCom 2026.
+This is ongoing work in preparation for submission to [ACM MobiCom 2026](https://www.sigmobile.org/mobicom/2026/).
