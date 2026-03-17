@@ -27,4 +27,4 @@ Before joining HKUST, I completed my undergraduate studies at [Global College](h
 - **MobiLog: A Data-Efficient Mobile Sensing System for Generating Behavior Logs via Synthetic Activity Modelling**
   Yizhen Wang, Yejia Liu, Runxi Huang, Kwun Ho Liu and Xiaomin Ouyang. Under review, submitted to ACM MobiCom 2026.
 
-[Email](wendyliuyejia@sjtu.edu.cn) / [Github](https://github.com/Yejialiu).
+[Email](mailto:wendyliuyejia@sjtu.edu.cn) / [Github](https://github.com/Yejialiu).
