@@ -7,9 +7,9 @@ redirect_from:
   - /about/
   - /about.html
 ---
-I'm a Senior undergraduate student from [UM-SJTU Institute](https://www.ji.sjtu.edu.cn/cn/), [Shanghai Jiao Tong University](https://en.sjtu.edu.cn/). My research interest includes computer vision, machine learning and Embedded AI system.
+I'm a first-year PhD student in CSE at [The Hong Kong University of Science and Technology](https://hkust.edu.hk/), advised by [Prof. Ouyang](https://seng.hkust.edu.hk/about/people/faculty/xiaomin-ouyang). My research interests include computer vision, machine learning, and embedded AI systems.
 
-I am very fortunate to be a PhD student advised by [Prof. Ouyang](https://seng.hkust.edu.hk/about/people/faculty/xiaomin-ouyang) from CSE, HKUST.
+Before joining HKUST, I completed my undergraduate studies at [Global College](https://www.ji.sjtu.edu.cn/cn/) (formerly UM-SJTU Joint Institute), [Shanghai Jiao Tong University](https://en.sjtu.edu.cn/). Before college, I studied at High School Affiliated to Shanghai Jiao Tong University.
 
 ## Selected Research Projects
 
@@ -24,7 +24,6 @@ I am very fortunate to be a PhD student advised by [Prof. Ouyang](https://seng.h
   Yejia Liu and Xiaomin Ouyang. Demo paper at ACM SenSys 2026.
 - **Chorus: Harmonizing Context and Sensing Signals for Data-Free Model Customization in IoT**  
   Liyu Zhang, Yejia Liu, Kwun Ho Liu, Runxi Huang, and Xiaomin Ouyang. Under review, submitted to ACM MobiCom 2026.
-
 - **MobiLog: A Data-Efficient Mobile Sensing System for Generating Behavior Logs via Synthetic Activity Modelling**
   Yizhen Wang, Yejia Liu, Runxi Huang, Kwun Ho Liu and Xiaomin Ouyang. Under review, submitted to ACM MobiCom 2026.
 
