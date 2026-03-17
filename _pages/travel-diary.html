@@ -1,0 +1,572 @@
+---
+layout: default
+title: "Travel Diary"
+permalink: /travel-diary/
+excerpt: "Places I have wandered"
+---
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Noto+Serif+SC:wght@300;400&family=Cormorant+Garamond:ital,wght@0,300;1,300&display=swap');
+
+  .travel-diary-page {
+    --td-bg: #f0ece4;
+    --td-ocean: #c8d8e8;
+    --td-land: #e8e4dc;
+    --td-land-border: #ccc6ba;
+    --td-visited: #1a3a6b;
+    --td-visited-border: #0f2550;
+    --td-dot: #f5a623;
+    --td-dot-bright: #ffe066;
+    --td-title: #1a3a6b;
+    --td-text: #3a3228;
+    --td-text-dim: #8a7d6a;
+    --td-divider: #c8b89a;
+    position: relative;
+    background: var(--td-bg);
+    color: var(--td-text);
+    font-family: 'Cormorant Garamond', serif;
+    overflow: hidden;
+  }
+
+  .travel-diary-page::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .travel-diary-page *,
+  .travel-diary-page *::before,
+  .travel-diary-page *::after {
+    box-sizing: border-box;
+  }
+
+  .travel-diary-shell {
+    position: relative;
+    z-index: 1;
+  }
+
+  .travel-diary-header {
+    text-align: center;
+    padding: 2.5rem 2rem 1.2rem;
+    border-bottom: 1px solid var(--td-divider);
+  }
+
+  .travel-diary-title-cn {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 0.8rem;
+    font-weight: 300;
+    letter-spacing: 0.6em;
+    color: var(--td-text-dim);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .travel-diary-title-main {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4.5vw, 3.6rem);
+    font-weight: 700;
+    color: var(--td-title);
+    letter-spacing: 0.04em;
+    line-height: 1;
+    margin: 0;
+  }
+
+  .travel-diary-title-sub {
+    font-style: italic;
+    font-size: 1.05rem;
+    color: var(--td-text-dim);
+    margin-top: 0.4rem;
+    letter-spacing: 0.12em;
+  }
+
+  .travel-diary-stats {
+    display: flex;
+    justify-content: center;
+    border-bottom: 1px solid var(--td-divider);
+  }
+
+  .travel-diary-stat {
+    text-align: center;
+    padding: 1rem 2.8rem;
+    border-right: 1px solid var(--td-divider);
+  }
+
+  .travel-diary-stat:last-child {
+    border-right: none;
+  }
+
+  .travel-diary-stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: var(--td-visited);
+    line-height: 1;
+    font-weight: 700;
+  }
+
+  .travel-diary-stat-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    color: var(--td-text-dim);
+    text-transform: uppercase;
+    margin-top: 0.2rem;
+  }
+
+  .travel-diary-map-container {
+    width: 100%;
+  }
+
+  #travel-diary-map-svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .travel-diary-country {
+    fill: var(--td-land);
+    stroke: var(--td-land-border);
+    stroke-width: 0.5;
+  }
+
+  .travel-diary-country.travel-diary-visited {
+    fill: var(--td-visited);
+    stroke: var(--td-visited-border);
+    stroke-width: 0.4;
+  }
+
+  .travel-diary-graticule {
+    fill: none;
+    stroke: rgba(100, 120, 160, 0.08);
+    stroke-width: 0.4;
+  }
+
+  .travel-diary-city-dot {
+    fill: var(--td-dot);
+    cursor: pointer;
+    filter: drop-shadow(0 0 3px rgba(245, 166, 35, 0.85)) drop-shadow(0 0 7px rgba(245, 166, 35, 0.4));
+  }
+
+  .travel-diary-city-dot:hover {
+    fill: #fff;
+    filter: drop-shadow(0 0 5px #f5a623) drop-shadow(0 0 14px rgba(245, 166, 35, 0.95));
+  }
+
+  .travel-diary-tooltip {
+    position: fixed;
+    background: rgba(26, 58, 107, 0.97);
+    border: 1px solid rgba(245, 166, 35, 0.65);
+    padding: 0.55rem 1rem;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.1s;
+    z-index: 999;
+    box-shadow: 0 4px 20px rgba(26, 58, 107, 0.3);
+  }
+
+  .travel-diary-tooltip.show {
+    opacity: 1;
+  }
+
+  .travel-diary-tooltip-city {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 0.95rem;
+    color: var(--td-dot-bright);
+  }
+
+  .travel-diary-tooltip-country {
+    font-size: 0.72rem;
+    color: rgba(200, 215, 235, 0.75);
+    margin-top: 0.12rem;
+    letter-spacing: 0.08em;
+  }
+
+  .travel-diary-bottom {
+    border-top: 1px solid var(--td-divider);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1.2rem 2.5rem 1.5rem;
+    gap: 1rem;
+  }
+
+  .travel-diary-legend {
+    display: flex;
+    align-items: center;
+    gap: 1.8rem;
+    flex-wrap: wrap;
+  }
+
+  .travel-diary-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.72rem;
+    color: var(--td-text-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .travel-diary-legend-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--td-dot);
+    box-shadow: 0 0 6px rgba(245, 166, 35, 0.7);
+    flex-shrink: 0;
+  }
+
+  .travel-diary-legend-sq {
+    width: 16px;
+    height: 11px;
+    flex-shrink: 0;
+    border-radius: 1px;
+  }
+
+  .travel-diary-flag-panel {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    max-width: 560px;
+    justify-content: flex-end;
+  }
+
+  .travel-diary-flag-tag {
+    font-size: 0.75rem;
+    padding: 0.18rem 0.55rem;
+    border: 1px solid var(--td-divider);
+    color: var(--td-text-dim);
+    font-family: 'Noto Serif SC', serif;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 2px;
+  }
+
+  .travel-diary-footer {
+    text-align: center;
+    padding: 1.2rem;
+    font-size: 0.68rem;
+    color: var(--td-text-dim);
+    letter-spacing: 0.2em;
+    font-style: italic;
+    border-top: 1px solid var(--td-divider);
+    opacity: 0.8;
+  }
+
+  @media (max-width: 900px) {
+    .travel-diary-stat {
+      padding: 1rem 1.5rem;
+    }
+
+    .travel-diary-bottom {
+      padding: 1rem 1.25rem 1.3rem;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .travel-diary-header {
+      padding: 2rem 1rem 1rem;
+    }
+
+    .travel-diary-stats {
+      flex-wrap: wrap;
+    }
+
+    .travel-diary-stat {
+      width: 33.333%;
+      min-width: 110px;
+      padding: 0.9rem 0.75rem;
+    }
+
+    .travel-diary-title-cn {
+      letter-spacing: 0.4em;
+    }
+
+    .travel-diary-bottom {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .travel-diary-flag-panel {
+      justify-content: flex-start;
+      max-width: none;
+    }
+  }
+</style>
+
+<div class="travel-diary-page">
+  <div class="travel-diary-shell">
+    <header class="travel-diary-header">
+      <div class="travel-diary-title-cn">旅行日记</div>
+      <h1 class="travel-diary-title-main">Travel Diary</h1>
+      <div class="travel-diary-title-sub">Places I have wandered</div>
+    </header>
+
+    <div class="travel-diary-stats">
+      <div class="travel-diary-stat">
+        <div class="travel-diary-stat-num" id="travel-diary-city-count">-</div>
+        <div class="travel-diary-stat-label">Cities</div>
+      </div>
+      <div class="travel-diary-stat">
+        <div class="travel-diary-stat-num" id="travel-diary-country-count">-</div>
+        <div class="travel-diary-stat-label">Countries</div>
+      </div>
+      <div class="travel-diary-stat">
+        <div class="travel-diary-stat-num" id="travel-diary-continent-count">-</div>
+        <div class="travel-diary-stat-label">Continents</div>
+      </div>
+    </div>
+
+    <div class="travel-diary-map-container">
+      <svg id="travel-diary-map-svg" viewBox="0 0 960 500" aria-label="Travel map"></svg>
+    </div>
+
+    <div class="travel-diary-tooltip" id="travel-diary-tooltip">
+      <div class="travel-diary-tooltip-city" id="travel-diary-tooltip-city"></div>
+      <div class="travel-diary-tooltip-country" id="travel-diary-tooltip-country"></div>
+    </div>
+
+    <div class="travel-diary-bottom">
+      <div class="travel-diary-legend">
+        <div class="travel-diary-legend-item">
+          <div class="travel-diary-legend-dot"></div>
+          <span>City visited</span>
+        </div>
+        <div class="travel-diary-legend-item">
+          <div class="travel-diary-legend-sq" style="background:#1a3a6b;border:1px solid #0f2550"></div>
+          <span>Country visited</span>
+        </div>
+        <div class="travel-diary-legend-item">
+          <div class="travel-diary-legend-sq" style="background:#e8e4dc;border:1px solid #ccc6ba"></div>
+          <span>Unvisited</span>
+        </div>
+      </div>
+      <div class="travel-diary-flag-panel" id="travel-diary-flag-panel"></div>
+    </div>
+
+    <footer class="travel-diary-footer">hover over a gold dot · 走过的路，都是风景</footer>
+  </div>
+</div>
+
+<script>
+  (() => {
+    const page = document.querySelector('.travel-diary-page');
+    if (!page || typeof d3 === 'undefined' || typeof topojson === 'undefined') {
+      return;
+    }
+
+    const cities = [
+      { name:"慕尼黑", en:"Munich", country:"Germany", flag:"🇩🇪", lat:48.1351, lon:11.5820 },
+      { name:"柏林", en:"Berlin", country:"Germany", flag:"🇩🇪", lat:52.5200, lon:13.4050 },
+      { name:"科隆", en:"Cologne", country:"Germany", flag:"🇩🇪", lat:50.9333, lon:6.9500 },
+      { name:"海德堡", en:"Heidelberg", country:"Germany", flag:"🇩🇪", lat:49.3988, lon:8.6724 },
+      { name:"吕贝克", en:"Lübeck", country:"Germany", flag:"🇩🇪", lat:53.8655, lon:10.6866 },
+      { name:"德累斯顿", en:"Dresden", country:"Germany", flag:"🇩🇪", lat:51.0504, lon:13.7373 },
+      { name:"库夫斯坦", en:"Kufstein", country:"Austria", flag:"🇦🇹", lat:47.5833, lon:12.1667 },
+      { name:"萨尔兹堡", en:"Salzburg", country:"Austria", flag:"🇦🇹", lat:47.8095, lon:13.0550 },
+      { name:"维也纳", en:"Vienna", country:"Austria", flag:"🇦🇹", lat:48.2082, lon:16.3738 },
+      { name:"因斯布鲁克", en:"Innsbruck", country:"Austria", flag:"🇦🇹", lat:47.2692, lon:11.4041 },
+      { name:"斯德哥尔摩", en:"Stockholm", country:"Sweden", flag:"🇸🇪", lat:59.3293, lon:18.0686 },
+      { name:"布达佩斯", en:"Budapest", country:"Hungary", flag:"🇭🇺", lat:47.4979, lon:19.0402 },
+      { name:"布拉格", en:"Prague", country:"Czechia", flag:"🇨🇿", lat:50.0755, lon:14.4378 },
+      { name:"苏黎世", en:"Zurich", country:"Switzerland", flag:"🇨🇭", lat:47.3769, lon:8.5417 },
+      { name:"卢塞恩", en:"Lucerne", country:"Switzerland", flag:"🇨🇭", lat:47.0502, lon:8.3093 },
+      { name:"龙疆", en:"Lungern", country:"Switzerland", flag:"🇨🇭", lat:46.7914, lon:8.1678 },
+      { name:"因特拉肯", en:"Interlaken", country:"Switzerland", flag:"🇨🇭", lat:46.6863, lon:7.8632 },
+      { name:"格林德瓦", en:"Grindelwald", country:"Switzerland", flag:"🇨🇭", lat:46.6243, lon:8.0410 },
+      { name:"施皮茨", en:"Spiez", country:"Switzerland", flag:"🇨🇭", lat:46.6889, lon:7.6770 },
+      { name:"伯尔尼", en:"Bern", country:"Switzerland", flag:"🇨🇭", lat:46.9480, lon:7.4474 },
+      { name:"雅典", en:"Athens", country:"Greece", flag:"🇬🇷", lat:37.9838, lon:23.7275 },
+      { name:"圣托里尼", en:"Santorini", country:"Greece", flag:"🇬🇷", lat:36.3932, lon:25.4615 },
+      { name:"巴塞罗那", en:"Barcelona", country:"Spain", flag:"🇪🇸", lat:41.3851, lon:2.1734 },
+      { name:"比萨", en:"Pisa", country:"Italy", flag:"🇮🇹", lat:43.7228, lon:10.4017 },
+      { name:"热那亚", en:"Genoa", country:"Italy", flag:"🇮🇹", lat:44.4056, lon:8.9463 },
+      { name:"佛罗伦萨", en:"Florence", country:"Italy", flag:"🇮🇹", lat:43.7696, lon:11.2558 },
+      { name:"威尼斯", en:"Venice", country:"Italy", flag:"🇮🇹", lat:45.4408, lon:12.3155 },
+      { name:"米兰", en:"Milan", country:"Italy", flag:"🇮🇹", lat:45.4654, lon:9.1866 },
+      { name:"科莫湖", en:"Lake Como", country:"Italy", flag:"🇮🇹", lat:45.8064, lon:9.0852 },
+      { name:"那不勒斯", en:"Naples", country:"Italy", flag:"🇮🇹", lat:40.8518, lon:14.2681 },
+      { name:"阿马尔菲", en:"Amalfi", country:"Italy", flag:"🇮🇹", lat:40.6340, lon:14.6027 },
+      { name:"索伦托", en:"Sorrento", country:"Italy", flag:"🇮🇹", lat:40.6263, lon:14.3757 },
+      { name:"卡普里岛", en:"Capri", country:"Italy", flag:"🇮🇹", lat:40.5509, lon:14.2135 },
+      { name:"罗马", en:"Rome", country:"Italy", flag:"🇮🇹", lat:41.9028, lon:12.4964 },
+      { name:"梵蒂冈", en:"Vatican City", country:"Vatican", flag:"🇻🇦", lat:41.9029, lon:12.4534 },
+      { name:"尼斯", en:"Nice", country:"France", flag:"🇫🇷", lat:43.7102, lon:7.2620 },
+      { name:"芒通", en:"Menton", country:"France", flag:"🇫🇷", lat:43.7750, lon:7.5031 },
+      { name:"昂蒂布", en:"Antibes", country:"France", flag:"🇫🇷", lat:43.5808, lon:7.1239 },
+      { name:"埃兹", en:"Èze", country:"France", flag:"🇫🇷", lat:43.7278, lon:7.3617 },
+      { name:"巴黎", en:"Paris", country:"France", flag:"🇫🇷", lat:48.8566, lon:2.3522 },
+      { name:"圣马洛", en:"Saint-Malo", country:"France", flag:"🇫🇷", lat:48.6493, lon:-2.0254 },
+      { name:"摩纳哥", en:"Monaco", country:"Monaco", flag:"🇲🇨", lat:43.7384, lon:7.4246 },
+      { name:"奥斯陆", en:"Oslo", country:"Norway", flag:"🇳🇴", lat:59.9139, lon:10.7522 },
+      { name:"弗洛姆", en:"Flåm", country:"Norway", flag:"🇳🇴", lat:60.8630, lon:7.1160 },
+      { name:"沃斯", en:"Voss", country:"Norway", flag:"🇳🇴", lat:60.6297, lon:6.4147 },
+      { name:"卑尔根", en:"Bergen", country:"Norway", flag:"🇳🇴", lat:60.3913, lon:5.3221 },
+      { name:"哥本哈根", en:"Copenhagen", country:"Denmark", flag:"🇩🇰", lat:55.6761, lon:12.5683 },
+      { name:"首尔", en:"Seoul", country:"South Korea", flag:"🇰🇷", lat:37.5665, lon:126.9780 },
+      { name:"新加坡", en:"Singapore", country:"Singapore", flag:"🇸🇬", lat:1.3521, lon:103.8198 },
+      { name:"东京", en:"Tokyo", country:"Japan", flag:"🇯🇵", lat:35.6762, lon:139.6503 },
+      { name:"富士山", en:"Mt. Fuji", country:"Japan", flag:"🇯🇵", lat:35.3606, lon:138.7274 },
+      { name:"镰仓", en:"Kamakura", country:"Japan", flag:"🇯🇵", lat:35.3192, lon:139.5469 },
+      { name:"大阪", en:"Osaka", country:"Japan", flag:"🇯🇵", lat:34.6937, lon:135.5023 },
+      { name:"京都", en:"Kyoto", country:"Japan", flag:"🇯🇵", lat:35.0116, lon:135.7681 },
+      { name:"宇治", en:"Uji", country:"Japan", flag:"🇯🇵", lat:34.8841, lon:135.7997 },
+      { name:"奈良", en:"Nara", country:"Japan", flag:"🇯🇵", lat:34.6851, lon:135.8048 },
+      { name:"神户", en:"Kobe", country:"Japan", flag:"🇯🇵", lat:34.6901, lon:135.1956 },
+      { name:"西宫市", en:"Nishinomiya", country:"Japan", flag:"🇯🇵", lat:34.7249, lon:135.3401 },
+      { name:"上海", en:"Shanghai", country:"China", flag:"🇨🇳", lat:31.2304, lon:121.4737 },
+      { name:"北京", en:"Beijing", country:"China", flag:"🇨🇳", lat:39.9042, lon:116.4074 },
+      { name:"南京", en:"Nanjing", country:"China", flag:"🇨🇳", lat:32.0603, lon:118.7969 },
+      { name:"杭州", en:"Hangzhou", country:"China", flag:"🇨🇳", lat:30.2741, lon:120.1551 },
+      { name:"福州", en:"Fuzhou", country:"China", flag:"🇨🇳", lat:26.0745, lon:119.2965 },
+      { name:"武汉", en:"Wuhan", country:"China", flag:"🇨🇳", lat:30.5928, lon:114.3055 },
+      { name:"青岛", en:"Qingdao", country:"China", flag:"🇨🇳", lat:36.0671, lon:120.3826 },
+      { name:"香港", en:"Hong Kong", country:"China", flag:"🇨🇳", lat:22.3193, lon:114.1694 },
+      { name:"深圳", en:"Shenzhen", country:"China", flag:"🇨🇳", lat:22.5431, lon:114.0579 },
+      { name:"苏州", en:"Suzhou", country:"China", flag:"🇨🇳", lat:31.2989, lon:120.5853 },
+      { name:"长沙", en:"Changsha", country:"China", flag:"🇨🇳", lat:28.2282, lon:112.9388 },
+      { name:"南昌", en:"Nanchang", country:"China", flag:"🇨🇳", lat:28.6820, lon:115.8580 },
+      { name:"景德镇", en:"Jingdezhen", country:"China", flag:"🇨🇳", lat:29.2692, lon:117.1779 },
+      { name:"婺源", en:"Wuyuan", country:"China", flag:"🇨🇳", lat:29.2480, lon:117.8610 },
+      { name:"珠海", en:"Zhuhai", country:"China", flag:"🇨🇳", lat:22.2710, lon:113.5767 },
+      { name:"横店", en:"Hengdian", country:"China", flag:"🇨🇳", lat:29.0069, lon:120.2488 },
+      { name:"义乌", en:"Yiwu", country:"China", flag:"🇨🇳", lat:29.3060, lon:120.0695 },
+      { name:"华山", en:"Huashan", country:"China", flag:"🇨🇳", lat:34.4868, lon:110.0854 },
+      { name:"九寨沟", en:"Jiuzhaigou", country:"China", flag:"🇨🇳", lat:33.2600, lon:103.9170 },
+      { name:"西安", en:"Xi'an", country:"China", flag:"🇨🇳", lat:34.3416, lon:108.9398 },
+      { name:"洛阳", en:"Luoyang", country:"China", flag:"🇨🇳", lat:34.6197, lon:112.4539 },
+      { name:"武夷山", en:"Wuyishan", country:"China", flag:"🇨🇳", lat:27.7565, lon:118.0355 },
+      { name:"黄山", en:"Huangshan", country:"China", flag:"🇨🇳", lat:30.1440, lon:118.1614 },
+      { name:"西宁", en:"Xining", country:"China", flag:"🇨🇳", lat:36.6171, lon:101.7782 },
+      { name:"青海湖", en:"Qinghai Lake", country:"China", flag:"🇨🇳", lat:36.8833, lon:100.1833 },
+      { name:"茶卡盐湖", en:"Chaka Salt Lake", country:"China", flag:"🇨🇳", lat:36.7815, lon:99.0845 },
+      { name:"大柴旦", en:"Dachaidan", country:"China", flag:"🇨🇳", lat:37.8527, lon:95.3690 },
+      { name:"敦煌", en:"Dunhuang", country:"China", flag:"🇨🇳", lat:40.1420, lon:94.6618 },
+      { name:"嘉峪关", en:"Jiayuguan", country:"China", flag:"🇨🇳", lat:39.8025, lon:98.2778 },
+      { name:"张掖", en:"Zhangye", country:"China", flag:"🇨🇳", lat:38.9323, lon:100.4516 },
+      { name:"祁连", en:"Qilian", country:"China", flag:"🇨🇳", lat:38.1841, lon:100.2519 }
+    ];
+
+    const countryList = [...new Set(cities.map(city => city.country))];
+    const continentMap = {
+      "Germany":"Europe",
+      "Austria":"Europe",
+      "Sweden":"Europe",
+      "Hungary":"Europe",
+      "Czechia":"Europe",
+      "Switzerland":"Europe",
+      "Greece":"Europe",
+      "Spain":"Europe",
+      "Italy":"Europe",
+      "Vatican":"Europe",
+      "France":"Europe",
+      "Monaco":"Europe",
+      "Norway":"Europe",
+      "Denmark":"Europe",
+      "South Korea":"Asia",
+      "Singapore":"Asia",
+      "Japan":"Asia",
+      "China":"Asia"
+    };
+    const continentList = [...new Set(countryList.map(country => continentMap[country] || "Other"))];
+
+    page.querySelector('#travel-diary-city-count').textContent = cities.length;
+    page.querySelector('#travel-diary-country-count').textContent = countryList.length;
+    page.querySelector('#travel-diary-continent-count').textContent = continentList.length;
+
+    const flagPanel = page.querySelector('#travel-diary-flag-panel');
+    const seenCountries = new Set();
+    cities.forEach(city => {
+      if (seenCountries.has(city.country)) {
+        return;
+      }
+      seenCountries.add(city.country);
+      const tag = document.createElement('div');
+      tag.className = 'travel-diary-flag-tag';
+      tag.textContent = `${city.flag} ${city.country}`;
+      flagPanel.appendChild(tag);
+    });
+
+    const width = 960;
+    const height = 500;
+    const svg = d3.select('#travel-diary-map-svg');
+    const projection = d3.geoNaturalEarth1().scale(155).translate([width / 2, height / 2]);
+    const path = d3.geoPath().projection(projection);
+    const visitedCodes = new Set([276, 40, 752, 348, 203, 756, 300, 724, 380, 336, 250, 492, 578, 208, 410, 702, 392, 156]);
+
+    const layerOcean = svg.append('g');
+    const layerGraticule = svg.append('g');
+    const layerLand = svg.append('g');
+    const layerGlow = svg.append('g').attr('pointer-events', 'none');
+    const layerDots = svg.append('g');
+
+    layerOcean.append('rect')
+      .attr('width', width)
+      .attr('height', height)
+      .attr('fill', '#c8d8e8');
+
+    layerGraticule.append('path')
+      .datum(d3.geoGraticule()())
+      .attr('class', 'travel-diary-graticule')
+      .attr('d', path);
+
+    const tooltip = page.querySelector('#travel-diary-tooltip');
+    const tooltipCity = page.querySelector('#travel-diary-tooltip-city');
+    const tooltipCountry = page.querySelector('#travel-diary-tooltip-country');
+
+    fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
+      .then(response => response.json())
+      .then(world => {
+        layerLand.selectAll('path')
+          .data(topojson.feature(world, world.objects.countries).features)
+          .join('path')
+          .attr('class', datum => visitedCodes.has(+datum.id) ? 'travel-diary-country travel-diary-visited' : 'travel-diary-country')
+          .attr('d', path);
+
+        layerGlow.selectAll('circle')
+          .data(cities)
+          .join('circle')
+          .attr('cx', datum => {
+            const point = projection([datum.lon, datum.lat]);
+            return point ? point[0] : -999;
+          })
+          .attr('cy', datum => {
+            const point = projection([datum.lon, datum.lat]);
+            return point ? point[1] : -999;
+          })
+          .attr('r', 6)
+          .attr('fill', 'rgba(245, 166, 35, 0.16)');
+
+        layerDots.selectAll('circle')
+          .data(cities)
+          .join('circle')
+          .attr('class', 'travel-diary-city-dot')
+          .attr('cx', datum => {
+            const point = projection([datum.lon, datum.lat]);
+            return point ? point[0] : -999;
+          })
+          .attr('cy', datum => {
+            const point = projection([datum.lon, datum.lat]);
+            return point ? point[1] : -999;
+          })
+          .attr('r', 3)
+          .on('mousemove', (event, datum) => {
+            tooltip.classList.add('show');
+            tooltipCity.textContent = `${datum.flag} ${datum.name}`;
+            tooltipCountry.textContent = `${datum.en} · ${datum.country}`;
+            tooltip.style.left = `${event.clientX + 14}px`;
+            tooltip.style.top = `${event.clientY - 12}px`;
+          })
+          .on('mouseleave', () => {
+            tooltip.classList.remove('show');
+          });
+      })
+      .catch(error => {
+        console.error('Failed to load travel diary map data.', error);
+      });
+  })();
+</script>
