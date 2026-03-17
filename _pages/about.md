@@ -9,7 +9,7 @@ redirect_from:
 ---
 I'm a first-year PhD student in CSE at [The Hong Kong University of Science and Technology](https://hkust.edu.hk/), advised by [Prof. Ouyang](https://seng.hkust.edu.hk/about/people/faculty/xiaomin-ouyang). My research interests include computer vision, machine learning, and embedded AI systems.
 
-Before joining HKUST, I completed my undergraduate studies at [Global College](https://www.ji.sjtu.edu.cn/cn/) (formerly UM-SJTU Joint Institute), [Shanghai Jiao Tong University](https://en.sjtu.edu.cn/). Before college, I studied at High School Affiliated to Shanghai Jiao Tong University.
+Before joining HKUST, I completed my undergraduate studies at [Global College](https://www.ji.sjtu.edu.cn/cn/) (formerly UM-SJTU Joint Institute), [Shanghai Jiao Tong University](https://en.sjtu.edu.cn/). From April 2024 to July 2024, I was an exchange student at Technical University of Munich (TUM). Before college, I studied at High School Affiliated to Shanghai Jiao Tong University.
 
 ## Selected Research Projects
 

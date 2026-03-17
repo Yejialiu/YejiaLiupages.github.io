@@ -22,6 +22,7 @@ Education
 * Ph.D. student in Computer Science and Engineering, The Hong Kong University of Science and Technology
   * Advisor: [Prof. Xiaomin Ouyang](https://seng.hkust.edu.hk/about/people/faculty/xiaomin-ouyang)
 * Undergraduate studies, Global College (formerly UM-SJTU Joint Institute), Shanghai Jiao Tong University
+* Exchange student, Technical University of Munich (TUM), Apr. 2024 - Jul. 2024
 * High School Affiliated to Shanghai Jiao Tong University
 
 Publications
