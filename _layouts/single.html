@@ -42,9 +42,15 @@ layout: default
           </p>
         {% elsif page.collection == 'publications' and page.venue %}
           <p>
-            Published in <i>{{ page.venue }}</i>
-            {% if page.year %}, {{ page.year }}{% elsif page.date %}, {{ page.date | date: "%Y" }}{% endif %}
+            {% if page.status %}
+              {{ page.status }}
+            {% else %}
+              Published in <i>{{ page.venue }}</i>
+              {% if page.year %}, {{ page.year }}{% elsif page.date %}, {{ page.date | date: "%Y" }}{% endif %}
+            {% endif %}
           </p>
+        {% elsif page.collection == 'publications' and page.status %}
+          <p>{{ page.status }}</p>
         {% elsif page.venue and page.date %}
           <p>Published in <i>{{ page.venue }}</i>, {{ page.date | default: "1900-01-01" | date: "%Y" }} </p>
         {% elsif page.date %}
